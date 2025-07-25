@@ -1,166 +1,101 @@
 import React, { useState, useEffect } from "react";
 import ListaTarea from "./ListaTarea";
 
-// const API_URL = `https://playground.4geeks.com/todo/users/alberto`;
+// const API_BASE = `https://playground.4geeks.com/todo/users/`;
+// const USER = "alberto"
 
 const Home = () => {
   const [tarea, setTarea] = useState([]);
-  const [tareas, setTareas] = useState([])
+  const [inputValue, setinputValue] = useState([])//recibir del usuario//////
 
-
-  const crearTarea = async () => {
+  //guardo usuario//
+  const crearUsuario = async () => {
     const response = await fetch("https://playground.4geeks.com/todo/users/alberto", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify()
     })
   }
 
-  const getTareas = async () => {
+
+  //pedir tarea////
+  const getTodos = async () => {
     const response = await fetch("https://playground.4geeks.com/todo/users/alberto")
-    console.log(response);
+
     if (!response.ok) {
       console.log("crea la tarea");
-      cargarTareas();
-      return
+      crearUsuario();
+
 
     }
 
     const data = await response.json()
-    console.log(data);
-    setTareas(lista);
+    setTarea(data.todos);
+    console.log(data.todos);
+
 
   }
-
-  const cargarTareas = async () => {
+  //crear tarea //
+  const creainputValue = async () => {
     const response = await fetch("https://playground.4geeks.com/todo/todos/alberto", {
-      method: "POST"
-    })
-    console.log(response);
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        label: inputValue,
+        is_done: false
+      })
+    }
+
+    )
+
     const data = await response.json()
     console.log(data);
-    getTareas()
+    getTodos()
+    setinputValue("")
   }
 
-  // getTareas()
+  // getinputValue()
   useEffect(() => {
-    getTareas()
+    getTodos()
   }, [])
 
 
 
 
-
-
-  // const crearLaTarea = async () => {
-  //   try {
-  //     const response = await fetch(API_URL, {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify([]),
-  //     });
-  //     if (!response.ok) {
-  //       console.log("No se pudo crear la tarea");
-  //     } else {
-  //       console.log("Tarea creada");
-  //     }
-  //   } catch (error) {
-  //     console.log("Error creando tarea:", error.message);
-  //   }
-  // };
-
-
-  // useEffect(() => {
-  //   const cargarTareas = async () => {
-  //     try {
-
-  //       const response = await fetch(API_URL, {
-  //         method: "POST",
-  //         headers: { "Content-Type": "application/json" },
-  //         body: JSON.stringify([]),
-  //       });
-
-  //       if (response.status === 404) {
-  //         console.log("Usuario no existe, creando...");
-  //         await crearLaTarea();
-  //         setTareas([]);
-  //         return;
-  //       }
-
-  //       if (!response.ok) {
-  //         throw new Error(`HTTP error! status: ${response.status}`);
-  //       }
-
-  //       const data = await response.json();
-  //       const lista = data.todos.map((t) => t.label);
-  //       setTareas(lista);
-  //     } catch (error) {
-  //       console.log("Error cargando tareas:", error.message);
-  //     }
-  //   };
-
-  //   cargarTareas();
-  // }, []);
-
-
-  const guardarTareas = async (lista) => {
-    setTareas(lista);
-
-    //   try {
-    //     const response = await fetch(API_URL, {
-    //       method: "PUT",
-    //       headers: { "Content-Type": "application/json" },
-    //       body: JSON.stringify(
-    //         lista.map((label) => ({
-    //           label,
-    //           done: false,
-    //         }))
-    //       ),
-    //     });
-
-    // if (!response.ok) {
-    //   console.log("Error guardando tareas");
-    // } else {
-    //   console.log("Tareas guardadas correctamente");
-    // }
-    //   } catch (error) {
-    //     console.log("Error en guardar tareas:", error.message);
-    //   }
-  };
-
-
   const handleKeyUp = (e) => {
-    if (e.key === "Enter" && tarea.trim() !== "") {
-      const nuevasTareas = [...tareas, tarea.trim()];
-      guardarTareas(nuevasTareas);
-      setTarea("");
+    if (e.key === "Enter" && inputValue.trim() !== "") {
+      creainputValue();
+
     }
   };
 
 
-  const eliminarTarea = (index) => {
-    const nuevasTareas = tareas.filter((_, i) => i !== index);
-    guardarTareas(nuevasTareas);
-  };
+  const eliminarTarea = async (id) => {
+    const responsive = await fetch(`https://playground.4geeks.com/todo/todos/${id}`, {
+      method: "DELETE"
+    })
+    getTodos()
+  }
+
+
 
   return (
     <div className="container mt-5" style={{ maxWidth: "600px" }}>
-      <h2 className="text-center mb-4"> 🖇️ Lista de Tareas</h2>
+      <h2 className="text-center mb-4"> 🖇️ Lista de inputValue</h2>
 
       <input
         type="text"
         className="form-control mb-3"
         placeholder="Siguiente tarea"
-        value={tarea}
-        onChange={(e) => setTarea(e.target.value)}
+        value={inputValue}
+        onChange={(e) => setinputValue(e.target.value)}
         onKeyUp={handleKeyUp}
       />
 
-      <ListaTarea tareas={tareas} eliminarTarea={eliminarTarea} />
+      <ListaTarea tarea={tarea} eliminarTarea={eliminarTarea} />
     </div>
   );
 };
 
 export default Home;
+

@@ -1,22 +1,24 @@
 import React from "react";
 
-const ListaTarea = ({ tareas, eliminarTarea }) => {
+const ListaTarea = ({ tarea, eliminarTarea }) => {
+    console.log(tarea);
+
     return (
         <ul className="list-group">
-            {tareas.length === 0 ? (
+            {tarea.length === 0 ? (
                 <li className="list-group-item text-center">
                     .  .  .
                 </li>
             ) : (
-                tareas.map((item, index) => (
+                tarea.map((todos) => (
                     <li
-                        key={index}
+                        key={todos.id}
                         className="list-group-item d-flex justify-content-between align-items-center"
                     >
-                        <span>{item}</span>
+                        <span>{todos.label}</span>
                         <button
                             className="btn btn-outline-light btn-sm"
-                            onClick={() => eliminarTarea(index)}
+                            onClick={() => eliminarTarea(todos.id)}
                         >
                             ✖️
                         </button>
@@ -28,3 +30,4 @@ const ListaTarea = ({ tareas, eliminarTarea }) => {
 };
 
 export default ListaTarea;
+
